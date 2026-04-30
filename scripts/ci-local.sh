@@ -21,9 +21,10 @@ echo "==> Backend tests (cwd backend/, SQLite unless DATABASE_URL is set)"
   pytest -q
 )
 
-echo "==> Frontend build"
+echo "==> Frontend lint + build"
 (
   cd frontend
+  npm run lint
   npm run build
 )
 

@@ -91,7 +91,7 @@ def create_react_graph(openrouter: OpenRouterClient, registry: ToolRegistry) -> 
                     {"role": "user", "content": user_block},
                 ],
                 temperature=0.2,
-                max_tokens=2048,
+                max_tokens=8192,
             )
             raw = response["choices"][0]["message"]["content"]
         except Exception as exc:
