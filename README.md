@@ -60,7 +60,7 @@ Requires [uv](https://docs.astral.sh/uv/) and Node 18+ / npm.
 
 ## CI/CD and Cloud Run (GCP)
 
-The [Dockerfile](Dockerfile) exists **solely** to produce the **Cloud Run** image: multi-stage Next static export → `/app/static`, then FastAPI on `$PORT` (8080 on Cloud Run). PR/push workflows **build that image**; deploy pushes it to Artifact Registry and updates Cloud Run when configured.
+The [Dockerfile](Dockerfile) exists **solely** to produce the **Cloud Run** image: multi-stage Next static export → `/app/static` (frontend stage uses **`npm ci`** with [`frontend/package-lock.json`](frontend/package-lock.json), same as CI), then FastAPI on `$PORT` (8080 on Cloud Run). PR/push workflows **build that image**; deploy pushes it to Artifact Registry and updates Cloud Run when configured.
 
 
 | Workflow                                                                                      | When                                                                                                                                                                    |
