@@ -1,122 +1,129 @@
-# meridian-support-agent
+# Meridian Support
 
-Minimal **Think → Act → Observe** agent stack: **Next.js 14**, **FastAPI**, **LangGraph**, **OpenRouter**, **Google Sign-In** (JWT cookie), **SQLAlchemy** with **PostgreSQL or CockroachDB** via `**asyncpg`** (`postgresql+asyncpg://…`). Point `DATABASE_URL` at your own database (local install, managed cloud, etc.). **Pytest / CI** use **SQLite** by default (no database container in this repo).
+**Meridian Support** is an internal prototype for **Meridian Electronics** customer support: a small web app where authorized users sign in with Google, chat with an AI assistant, and—when configured—let the assistant call your **order and catalog** services over **MCP (Model Context Protocol)** instead of hitting databases directly.
 
-**Docker in this repo:** the **[Dockerfile](Dockerfile)** is **only** for **building the production image** and **deploying to Google Cloud Run** (CI `docker/build-push-action`, Artifact Registry, then Cloud Run). Local development uses **uv** + **uvicorn** and/or **Next.js** directly—not Docker.
+It is built for demos and engineering evaluation, not as a production customer-facing product out of the box.
 
-MCP / tools are behind a `ToolRegistry` interface; the default is `**NullToolRegistry`** (empty tool list). Swap in a real registry when you connect an MCP server—see [backend/app/tools/registry.py](backend/app/tools/registry.py).
+---
 
-**Auth (Google):** `POST /api/v1/auth/google` sets an httpOnly `access_token` cookie; `**GET /api/v1/auth/me`** returns `{ "user": null }` or the signed-in user (always 200) so the UI can restore sessions without logging **401** on every cold load; `**GET /api/v1/users/me`** remains for a strict profile fetch behind the cookie middleware. `**AuthMiddleware**` enforces the cookie on `/api/*` except `/api/v1/auth/*`; the UI uses `**apiFetch**` + `**useAuth**` (Zustand) and **Sign out** calls `POST /api/v1/auth/logout`. The **home route `/`** is the **login page**; if a session exists, the app **redirects to `/chat/`**.
+## What you get
 
-**Chat:** conversations are stored in the database (`chat_conversations`, `chat_messages`). Use `**POST /api/v1/chat/conversations`** to open a new thread, `**GET /api/v1/chat/conversations**` to list them, `**GET /api/v1/chat/conversations/{id}/messages**` to load history, and `**POST /api/v1/chat/**` to send a message (optional `conversation_id` in the body).
+- **Web UI** (Next.js): sign-in, chat, conversation history, Meridian-branded layout.
+- **API** (FastAPI): Google ID token verification, JWT session cookie, chat persistence, OpenRouter-backed **ReAct** loop (think → act → observe).
+- **Optional MCP**: set `MCP_SERVER_URL` on the backend to connect a **Streamable HTTP** MCP server so the model sees real tools (availability, orders, etc.). See [`backend/.env.example`](backend/.env.example).
+- **Tests & CI**: backend `pytest`, frontend lint + static export, Docker image build; optional deploy to **Google Cloud Run** when GCP variables are set ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)).
 
-## Quick start
+### Agent flow (ReAct)
 
-### Backend
+The chat backend runs a compiled **LangGraph** graph: the model **thinks** (JSON: thought, optional `final_answer`, or `action` for a tool), optionally **acts** via the tool registry (including MCP), then **observes** the tool result on the scratchpad and loops until there is a final answer, a parse or API error, or the iteration cap is hit.
+
+```mermaid
+flowchart TD
+    Start([Chat request]) --> Think[think]
+    Think --> RouteThink{After think}
+    RouteThink -->|final_answer set| End([END])
+    RouteThink -->|pending_tool_call| Act[act]
+    RouteThink -->|no tool / error| End
+    Act --> Observe[observe]
+    Observe -->|iteration + 1, scratchpad updated| Think
+```
+
+Implementation: [`backend/app/agents/react_graph.py`](backend/app/agents/react_graph.py).
+
+---
+
+## Prerequisites
+
+- **[uv](https://docs.astral.sh/uv/)** (Python 3.11+)
+- **Node.js 18+** and **npm** (frontend uses `package-lock.json` and `npm ci` in Docker/CI)
+
+---
+
+## Run it locally (two terminals)
+
+### 1. Backend API
 
 ```bash
 cd backend
 cp .env.example .env
-# DATABASE_URL=postgresql+asyncpg://… (see .env.example). For Cockroach Cloud TLS:
-#   Put CA in backend/.postgresql/root.crt, set POSTGRES_SSL_MODE=verify-full, POSTGRES_SSL_ROOT_CERT=.postgresql/root.crt
-#   (do not use sslmode/sslrootcert on the URL—TLS is applied via connect_args.)
-# Local insecure Cockroach/Postgres: DATABASE_SSL_DISABLE=true
-# Set GOOGLE_CLIENT_ID, OPENROUTER_API_KEY, SECRET_KEY
-uv venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
-uv pip install -e .
-uvicorn app.main:app --reload --port 8000
 ```
 
-### Frontend
+Edit `.env` and set at least **`SECRET_KEY`**, **`GOOGLE_CLIENT_ID`**, **`OPENROUTER_API_KEY`**, and **`DATABASE_URL`** (Postgres/Cockroach URL, or SQLite for quick tries—see comments in [`.env.example`](backend/.env.example)).
+
+```bash
+uv sync --group dev
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+API docs: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+
+### 2. Frontend (Next dev server)
 
 ```bash
 cd frontend
 cp .env.example .env.local
-# NEXT_PUBLIC_GOOGLE_CLIENT_ID must match backend GOOGLE_CLIENT_ID (Web client)
+```
+
+Set **`NEXT_PUBLIC_GOOGLE_CLIENT_ID`** to the **same Web client ID** as `GOOGLE_CLIENT_ID` on the backend. For local split origins, set **`NEXT_PUBLIC_API_URL=http://127.0.0.1:8000`**.
+
+```bash
 npm install
 npm run dev
 ```
 
-The frontend uses `**output: "export"**`: `npm run build` writes to `frontend/out/`. Copy that tree into `**backend/static/**` and run **uvicorn from `backend/`** so the API and UI share one origin (cookies work without CORS tricks).
+Open [http://localhost:3000](http://localhost:3000)—sign in, then use **Chat**.
 
-- **Same-origin (recommended):** leave `NEXT_PUBLIC_API_URL` empty, run `./scripts/export-static.sh` (build + copy only) or `**./build_and_serve.sh`** (build, copy, then **starts uvicorn** on `:8000`), then open `http://127.0.0.1:8000/`.
-- `**next dev` on :3000:** set `NEXT_PUBLIC_API_URL=http://127.0.0.1:8000` in `frontend/.env.local` so fetches hit the API (static export does not use Next rewrites).
+---
 
-## Bash scripts
+## One origin (recommended): API + static UI on port 8000
 
+The frontend is configured for **static export**. Build it and copy the export into the backend so the browser talks to one host (simple cookies, no CORS setup):
 
-| Script                                               | Purpose                                                                                                                                                  |
-| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [scripts/bootstrap.sh](scripts/bootstrap.sh)         | Copy `.env` templates, `uv` + `npm install` (no servers).                                                                                                |
-| [scripts/start-dev.sh](scripts/start-dev.sh)         | Backend `:8000` + Next dev `:3000` (run after bootstrap).                                                                                                |
-| [scripts/ci-local.sh](scripts/ci-local.sh)           | Same checks as CI: `pytest` (SQLite under `backend/data/`) + `npm run build`. No Docker (see note above).                                                |
-| [scripts/export-static.sh](scripts/export-static.sh) | `npm run build` then copy `frontend/out/` → `backend/static/`.                                                                                           |
-| [start_project.sh](start_project.sh)                 | Bootstrap then start backend + frontend.                                                                                                                 |
-| [build_and_serve.sh](build_and_serve.sh)             | Venv, backend install, `.env`, `npm install` + `npm run` build, copy `frontend/out/` → `backend/static/`, then `**exec uvicorn`** (single app on :8000). |
-| [backend/start_backend.sh](backend/start_backend.sh) | Backend-only dev server from `backend/`.                                                                                                                 |
+```bash
+./build_and_serve.sh
+```
 
+Then open **http://127.0.0.1:8000/** (or use [`scripts/export-static.sh`](scripts/export-static.sh) if you only want to build and copy, and start uvicorn yourself).
 
-Requires [uv](https://docs.astral.sh/uv/) and Node 18+ / npm.
+---
 
-## CI/CD and Cloud Run (GCP)
+## Helpful scripts
 
-The [Dockerfile](Dockerfile) exists **solely** to produce the **Cloud Run** image: multi-stage Next static export → `/app/static` (frontend stage uses **`npm ci`** with [`frontend/package-lock.json`](frontend/package-lock.json), same as CI), then FastAPI on `$PORT` (8080 on Cloud Run). PR/push workflows **build that image**; deploy pushes it to Artifact Registry and updates Cloud Run when configured.
+| Script | What it does |
+|--------|----------------|
+| [`scripts/bootstrap.sh`](scripts/bootstrap.sh) | Creates `.env` files from examples; installs backend (`uv`) and frontend (`npm`) dependencies. |
+| [`scripts/start-dev.sh`](scripts/start-dev.sh) | Runs backend on **:8000** and Next dev on **:3000** (after bootstrap). |
+| [`scripts/ci-local.sh`](scripts/ci-local.sh) | Same idea as CI: backend tests + frontend **lint** + **build**. |
+| [`build_and_serve.sh`](build_and_serve.sh) | Full path to a single server on **:8000** (export UI → `backend/static/` + uvicorn). |
+| [`backend/start_backend.sh`](backend/start_backend.sh) | Backend only from `backend/`. |
 
+---
 
-| Workflow                                                                                      | When                                                                                                                                                                    |
-| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `[.github/workflows/ci.yml](.github/workflows/ci.yml)`                                        | **Git root** here: `pytest`, frontend lint + static export, **container image build** (Dockerfile → Cloud Run path), **deploy** on non-PR when `GCP_PROJECT_ID` is set. |
-| `[.github/workflows/meridian-support-agent-ci.yml](../.github/workflows/meridian-support-agent-ci.yml)` | **Monorepo** root: same jobs with `meridian-support-agent/` paths; Docker **build context** is `meridian-support-agent` for the same Cloud Run image.                             |
+## Deploying (Google Cloud Run)
 
+- The [**Dockerfile**](Dockerfile) builds a production image: **Next export** → `static/`, then **FastAPI** on `$PORT` (8080 on Cloud Run). The frontend stage uses **`npm ci`** with [`frontend/package-lock.json`](frontend/package-lock.json).
+- GitHub Actions (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs tests and lint, builds the image, and **can deploy** when repository variables such as **`GCP_PROJECT_ID`** are configured. Use **Workload Identity Federation** instead of long-lived JSON keys where possible.
+- Production env vars and secrets are documented in the workflow and in [`backend/.env.example`](backend/.env.example) (including optional **`MCP_SERVER_URL`**, **`MCP_SERVER_ID`**, **`GOOGLE_CLIENT_SECRET`** if you pass it through to Cloud Run).
 
-**Deploy is skipped** until you add repository **Variables** (Settings → Secrets and variables → Actions → Variables), at minimum `GCP_PROJECT_ID`. Use **Workload Identity Federation** (`google-github-actions/auth@v2`) so GitHub Actions can push to Artifact Registry and deploy Cloud Run without long-lived JSON keys—configure a WIF provider and a deployer service account in GCP, then set `GCP_WORKLOAD_IDENTITY_PROVIDER` and `GCP_SERVICE_ACCOUNT` in the workflow variables.
+---
 
-### GitHub Actions variables (suggested)
+## Where to look in the code
 
+| Area | Path |
+|------|------|
+| ReAct graph (think / act / observe) | [`backend/app/agents/react_graph.py`](backend/app/agents/react_graph.py) |
+| System prompt + Meridian tone | [`backend/system_prompts/react/react_loop.md`](backend/system_prompts/react/react_loop.md) |
+| MCP client (Streamable HTTP) | [`backend/app/tools/mcp_registry.py`](backend/app/tools/mcp_registry.py) |
+| API entry, tool wiring | [`backend/app/main.py`](backend/app/main.py) |
+| Chat UI | [`frontend/app/chat/page.tsx`](frontend/app/chat/page.tsx) |
+| Copy & branding strings | [`frontend/lib/meridian.ts`](frontend/lib/meridian.ts) |
 
-| Variable                         | Purpose                                                           |
-| -------------------------------- | ----------------------------------------------------------------- |
-| `GCP_PROJECT_ID`                 | Enables deploy job when non-empty                                 |
-| `GCP_REGION`                     | e.g. `europe-west1`                                               |
-| `GAR_REPOSITORY`                 | Artifact Registry Docker repo name                                |
-| `CLOUD_RUN_SERVICE`              | Cloud Run service name                                            |
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | WIF provider resource name                                        |
-| `GCP_SERVICE_ACCOUNT`            | Deployer service account email                                    |
-| `NEXT_PUBLIC_GOOGLE_CLIENT_ID`   | Baked into static export at image build (Web client ID)           |
-| `GOOGLE_CLIENT_ID`               | Backend verifies Google ID tokens (often same as `NEXT_PUBLIC_`*) |
-| `HOST`                           | Public URL, e.g. `https://your-service.run.app`                   |
-| `CORS_ORIGINS`                   | Comma list; include your Cloud Run URL                            |
-| `ALLOWED_HOSTS`                  | Include `*` or your Run hostname                                  |
-| `APP_NAME`                       | Display name (default **Meridian Support**); `/health`, OpenRouter `X-Title` |
-| `OPENROUTER_BASE_URL`            | Default `https://openrouter.ai/api/v1`                            |
-| `OPENROUTER_DEFAULT_MODEL`       | e.g. `openai/gpt-4o-mini`                                         |
-| `MAX_REACT_ITERATIONS`           | Optional cap                                                      |
+---
 
+## MCP in one sentence
 
-### GitHub Actions secrets
+If **`MCP_SERVER_URL`** is set, the backend registers [`McpStreamableHttpToolRegistry`](backend/app/tools/mcp_registry.py) at startup, loads tool definitions from your server, and injects them into each model “think” step. If it is unset, the app runs with an empty tool list (the assistant answers without business tools).
 
+---
 
-| Secret               | Purpose                                        |
-| -------------------- | ---------------------------------------------- |
-| `DATABASE_URL`       | Production DB, e.g. `postgresql+asyncpg://...` |
-| `SECRET_KEY`         | JWT signing                                    |
-| `OPENROUTER_API_KEY` | LLM calls                                      |
-
-
-## Layout
-
-
-| Path                                                                                     | Role                                                               |
-| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| [Dockerfile](Dockerfile)                                                                 | **Cloud Run only** — production container (Next export + FastAPI). |
-| [backend/app/agents/react_graph.py](backend/app/agents/react_graph.py)                   | LangGraph: `think` → (`act` → `observe`) → `END`                   |
-| [backend/system_prompts/react/react_loop.md](backend/system_prompts/react/react_loop.md) | ReAct JSON contract for the model                                  |
-| [frontend/components/auth/SignIn.tsx](frontend/components/auth/SignIn.tsx)               | `@react-oauth/google` → `POST /api/v1/auth/google`                 |
-
-
-## Adding MCP later
-
-1. Implement `ToolRegistry` (`initialize`, `list_tools_flat`, `invoke_tool`).
-2. Register it on `app.state.tool_registry` in [backend/app/main.py](backend/app/main.py) instead of (or wrapping) `NullToolRegistry`.
-3. No change required to graph routing—the **think** node always injects the live tool list into the system prompt.
-
+Questions or improvements: open an issue or extend the prompts and UI under [`frontend/lib/meridian.ts`](frontend/lib/meridian.ts) and [`backend/system_prompts/react/react_loop.md`](backend/system_prompts/react/react_loop.md).
