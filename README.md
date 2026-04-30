@@ -101,6 +101,8 @@ Then open **http://127.0.0.1:8000/** (or use [`scripts/export-static.sh`](script
 
 ## Deploying (Google Cloud Run)
 
+**Live preview:** **[https://meridian-support-agent-r4hbkke6ba-uc.a.run.app/](https://meridian-support-agent-r4hbkke6ba-uc.a.run.app/)** — internal prototype on Cloud Run; sign in with an authorized Google account as configured for that deployment.
+
 - The [**Dockerfile**](Dockerfile) builds a production image: **Next export** → `static/`, then **FastAPI** on `$PORT` (8080 on Cloud Run). The frontend stage uses **`npm ci`** with [`frontend/package-lock.json`](frontend/package-lock.json).
 - GitHub Actions (see [`.github/workflows/ci.yml`](.github/workflows/ci.yml)) runs tests and lint, builds the image, and **can deploy** when repository variables such as **`GCP_PROJECT_ID`** are configured. Use **Workload Identity Federation** instead of long-lived JSON keys where possible.
 - Production env vars and secrets are documented in the workflow and in [`backend/.env.example`](backend/.env.example) (including optional **`MCP_SERVER_URL`**, **`MCP_SERVER_ID`**, **`GOOGLE_CLIENT_SECRET`** if you pass it through to Cloud Run).
