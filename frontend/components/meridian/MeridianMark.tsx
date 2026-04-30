@@ -23,7 +23,7 @@ export default function MeridianMark({
 }: MeridianMarkProps) {
   return (
     <span
-      className={`flex shrink-0 items-center justify-center bg-gradient-to-br from-meridian-600 to-meridian-800 text-white shadow-md shadow-meridian-600/25 dark:from-meridian-500 dark:to-meridian-700 ${roundingClasses[rounding]} ${sizeClasses[size]} ${className}`}
+      className={`flex shrink-0 items-center justify-center bg-meridian-600 text-white shadow-sm ring-1 ring-meridian-700/20 dark:bg-meridian-500 dark:ring-meridian-400/25 ${roundingClasses[rounding]} ${sizeClasses[size]} ${className}`}
       aria-hidden
     >
       M

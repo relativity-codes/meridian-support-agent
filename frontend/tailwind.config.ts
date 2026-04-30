@@ -19,10 +19,6 @@ const config: Config = {
           950: "var(--meridian-950)",
         },
       },
-      backgroundImage: {
-        "meridian-page":
-          "linear-gradient(to bottom right, var(--meridian-surface-from), var(--meridian-surface-via), var(--meridian-surface-to))",
-      },
     },
   },
   plugins: [],

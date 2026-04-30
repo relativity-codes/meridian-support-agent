@@ -42,9 +42,9 @@ export default function HomePage() {
 
   return (
     <main className="min-h-[100dvh] bg-meridian-page">
-      <div className="mx-auto flex max-w-2xl flex-col gap-10 px-4 py-14 sm:py-20">
-        <div className="flex flex-col gap-6 rounded-2xl border border-slate-200/90 bg-white/90 p-8 shadow-xl shadow-slate-300/20 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/85 dark:shadow-black/40 dark:ring-slate-800/60 sm:p-10">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-start">
+      <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16 sm:max-w-4xl sm:px-10 sm:py-24 lg:max-w-5xl">
+        <div className="flex flex-col gap-8 rounded-3xl border border-slate-200/90 bg-white/90 p-8 shadow-xl shadow-slate-300/20 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/85 dark:shadow-black/40 dark:ring-slate-800/60 sm:p-12">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8 lg:gap-10">
             <MeridianMark size="md" className="shadow-lg shadow-meridian-600/25" />
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-wider text-meridian-700 dark:text-meridian-400">
@@ -54,7 +54,7 @@ export default function HomePage() {
                 {MERIDIAN_COMPANY_NAME}
               </h1>
               <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{MERIDIAN_TAGLINE}</p>
-              <ul className="mt-5 list-inside list-disc space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
+              <ul className="mt-6 list-inside list-disc space-y-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-[15px]">
                 {MERIDIAN_CAPABILITIES.map((c) => (
                   <li key={c}>{c}</li>
                 ))}
@@ -62,14 +62,16 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="rounded-xl border border-amber-200/90 bg-amber-50/90 px-4 py-3 text-sm text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100">
+          <div className="rounded-xl border border-amber-200/90 bg-amber-50/90 px-5 py-4 text-sm leading-relaxed text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100 sm:px-6 sm:py-5">
             <strong className="font-semibold">Prototype.</strong> {MERIDIAN_PROTOTYPE_DISCLAIMER}
           </div>
 
-          <div className="border-t border-slate-200/80 pt-8 dark:border-slate-700/80">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Authorized access</h2>
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{MERIDIAN_AUTH_HINT}</p>
-            <div className="mt-6 flex justify-center sm:justify-start">
+          <div className="border-t border-slate-200/80 pt-10 dark:border-slate-700/80">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white sm:text-xl">Authorized access</h2>
+            <p className="mt-3 max-w-prose text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-[15px]">
+              {MERIDIAN_AUTH_HINT}
+            </p>
+            <div className="mt-8 flex justify-center sm:justify-start">
               <SignIn />
             </div>
           </div>

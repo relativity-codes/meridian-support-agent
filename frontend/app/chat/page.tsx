@@ -224,7 +224,7 @@ export default function ChatPage() {
 
   if (isLoading || !user) {
     return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-meridian-page px-4">
+      <main className="flex min-h-[100dvh] items-center justify-center bg-meridian-page px-6">
         <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-6 py-4 shadow-lg shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/30">
           <span
             className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-meridian-200 border-t-meridian-600 dark:border-meridian-900 dark:border-t-meridian-400"
@@ -239,25 +239,27 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-meridian-page">
-      <div className="mx-auto flex min-h-[100dvh] max-h-[100dvh] max-w-3xl flex-col px-3 py-4 sm:px-5 sm:py-6">
-        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white/85 shadow-xl shadow-slate-300/25 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/80 dark:shadow-black/40 dark:ring-slate-800/60">
-          <header className="shrink-0 border-b border-slate-200/80 bg-gradient-to-r from-white to-slate-50/90 px-4 py-4 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/95 sm:px-5">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
+      <main className="min-h-[100dvh] bg-meridian-page">
+      <div className="mx-auto flex min-h-[100dvh] max-h-[100dvh] w-full max-w-5xl flex-col px-4 py-6 sm:max-w-6xl sm:px-8 sm:py-8 lg:max-w-7xl lg:px-10">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-3xl border border-slate-200/90 bg-white/85 shadow-xl shadow-slate-300/25 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/80 dark:shadow-black/40 dark:ring-slate-800/60">
+          <header className="shrink-0 border-b border-slate-200/80 bg-white px-5 py-5 dark:border-slate-800 dark:bg-slate-900 sm:px-8 sm:py-6">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between lg:gap-8">
+              <div className="flex min-w-0 flex-1 items-start gap-4">
                 <div className="mt-0.5 shrink-0">
                   <MeridianMark size="md" />
                 </div>
-                <div>
-                  <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">
+                <div className="min-w-0">
+                  <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl lg:text-2xl">
                     {MERIDIAN_SUPPORT_TITLE}
                   </h1>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{MERIDIAN_CHAT_SUBTITLE}</p>
+                  <p className="mt-1.5 max-w-prose text-xs leading-relaxed text-slate-500 dark:text-slate-400 sm:text-sm">
+                    {MERIDIAN_CHAT_SUBTITLE}
+                  </p>
                 </div>
               </div>
-              <div className="flex flex-col gap-2 sm:items-end">
-                <div className="flex w-full flex-wrap items-center gap-2 sm:justify-end">
-                  <label className="flex min-w-0 flex-1 flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 sm:max-w-[280px] sm:flex-initial">
+              <div className="flex shrink-0 flex-col gap-3 sm:items-end">
+                <div className="flex w-full flex-wrap items-center gap-3 sm:justify-end">
+                  <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 sm:min-w-[12rem] sm:max-w-md sm:flex-initial">
                     <span className="sr-only sm:not-sr-only sm:inline">Thread</span>
                     <select
                       className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-normal normal-case text-slate-900 shadow-sm outline-none transition focus:border-meridian-300 focus:ring-2 focus:ring-meridian-500/20 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-meridian-600 dark:focus:ring-meridian-400/20"
@@ -303,7 +305,7 @@ export default function ChatPage() {
 
           <section
             aria-label="Conversation"
-            className="chat-scroll min-h-0 flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-slate-50/90 to-slate-100/50 px-4 py-5 dark:from-slate-950/50 dark:to-slate-950 sm:px-5"
+            className="chat-scroll min-h-0 flex-1 space-y-5 overflow-y-auto bg-slate-50 px-5 py-6 dark:bg-slate-950 sm:space-y-6 sm:px-8 sm:py-8"
           >
             {loadingThread && (
               <div className="flex flex-col items-center justify-center gap-3 py-12">
@@ -315,7 +317,7 @@ export default function ChatPage() {
               </div>
             )}
             {!loadingThread && messages.length === 0 && !loading && (
-              <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-10 text-center">
+              <div className="mx-auto flex max-w-2xl flex-col items-center px-4 py-12 text-center sm:py-16">
                 <div
                   className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-meridian-100 dark:bg-meridian-950/80"
                   aria-hidden
@@ -331,14 +333,14 @@ export default function ChatPage() {
                 <p className="mt-5 text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
                   Try asking
                 </p>
-                <div className="mt-2 flex max-w-full flex-wrap justify-center gap-2">
+                <div className="mt-4 flex max-w-full flex-wrap justify-center gap-3">
                   {MERIDIAN_SAMPLE_PROMPTS.map((p) => (
                     <button
                       key={p}
                       type="button"
                       disabled={loading || loadingThread}
                       onClick={() => setMessage(p)}
-                      className="max-w-[min(100%,20rem)] rounded-full border border-meridian-200/90 bg-white px-3 py-1.5 text-left text-xs font-medium leading-snug text-meridian-900 shadow-sm transition hover:border-meridian-300 hover:bg-meridian-50 disabled:opacity-50 dark:border-meridian-800 dark:bg-slate-900 dark:text-meridian-100 dark:hover:bg-meridian-950/50"
+                      className="max-w-[min(100%,22rem)] rounded-full border border-meridian-200/90 bg-white px-4 py-2.5 text-left text-xs font-medium leading-snug text-meridian-900 shadow-sm transition hover:border-meridian-300 hover:bg-meridian-50 disabled:opacity-50 dark:border-meridian-800 dark:bg-slate-900 dark:text-meridian-100 dark:hover:bg-meridian-950/50 sm:text-[13px]"
                     >
                       {p}
                     </button>
@@ -349,7 +351,7 @@ export default function ChatPage() {
             {messages.map((m) => (
               <div
                 key={m.id}
-                className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex gap-3 ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {m.role === "assistant" && (
                   <div className="mt-1 hidden shrink-0 sm:block" aria-hidden>
@@ -357,9 +359,9 @@ export default function ChatPage() {
                   </div>
                 )}
                 <div
-                  className={`max-w-[min(100%,36rem)] rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm ${
+                  className={`max-w-[min(100%,42rem)] rounded-2xl px-4 py-3.5 text-[15px] leading-relaxed shadow-sm sm:px-5 sm:py-4 lg:max-w-[min(100%,48rem)] ${
                     m.role === "user"
-                      ? "rounded-br-md bg-gradient-to-br from-meridian-600 to-meridian-700 text-white shadow-meridian-500/20 dark:from-meridian-500 dark:to-meridian-600"
+                      ? "rounded-br-md bg-meridian-600 text-white shadow-sm ring-1 ring-meridian-700/30 dark:bg-meridian-500 dark:ring-meridian-600/40"
                       : "rounded-bl-md border border-slate-200/90 bg-white text-slate-800 shadow-slate-200/40 dark:border-slate-700/90 dark:bg-slate-900 dark:text-slate-100 dark:shadow-black/20"
                   }`}
                 >
@@ -383,7 +385,7 @@ export default function ChatPage() {
               </div>
             ))}
             {loading && (
-              <div className="flex justify-start gap-2">
+              <div className="flex justify-start gap-3">
                 <div className="mt-1 flex shrink-0" aria-hidden>
                   <MeridianMark size="sm" rounding="lg" />
                 </div>
@@ -401,11 +403,11 @@ export default function ChatPage() {
             <div ref={bottomRef} className="h-px shrink-0" />
           </section>
 
-          <footer className="shrink-0 border-t border-slate-200/80 bg-white/95 p-4 dark:border-slate-800 dark:bg-slate-900/95 sm:p-5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+          <footer className="shrink-0 border-t border-slate-200/80 bg-white/95 p-5 dark:border-slate-800 dark:bg-slate-900/95 sm:p-6 lg:px-8 lg:pb-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
               <div className="min-w-0 flex-1">
                 <textarea
-                  className="min-h-[104px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-[15px] leading-relaxed text-slate-900 shadow-inner outline-none transition placeholder:text-slate-400 focus:border-meridian-300 focus:bg-white focus:ring-2 focus:ring-meridian-500/15 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-meridian-600 dark:focus:bg-slate-950 dark:focus:ring-meridian-400/15"
+                  className="min-h-[112px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 p-4 text-[15px] leading-relaxed text-slate-900 shadow-inner outline-none transition placeholder:text-slate-400 focus:border-meridian-300 focus:bg-white focus:ring-2 focus:ring-meridian-500/15 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-meridian-600 dark:focus:bg-slate-950 dark:focus:ring-meridian-400/15 sm:min-h-[120px]"
                   placeholder={MERIDIAN_COMPOSER_PLACEHOLDER}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
@@ -424,7 +426,7 @@ export default function ChatPage() {
                 type="button"
                 onClick={() => void send()}
                 disabled={loading || loadingThread || !message.trim()}
-                className="h-11 shrink-0 rounded-xl bg-gradient-to-r from-meridian-600 to-meridian-800 px-8 text-sm font-semibold text-white shadow-md shadow-meridian-500/25 transition hover:from-meridian-500 hover:to-meridian-700 hover:shadow-lg hover:shadow-meridian-500/30 disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none sm:h-[104px] sm:self-stretch sm:px-6"
+                className="h-11 shrink-0 rounded-xl bg-meridian-600 px-10 text-sm font-semibold text-white shadow-sm transition hover:bg-meridian-700 active:bg-meridian-800 disabled:pointer-events-none disabled:opacity-45 dark:bg-meridian-600 dark:hover:bg-meridian-500 sm:h-[120px] sm:self-stretch sm:px-8"
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
@@ -450,7 +452,7 @@ export default function ChatPage() {
           </footer>
 
           {scratchpad && scratchpad.length > 0 && (
-            <details className="shrink-0 border-t border-dashed border-slate-200 bg-slate-50/50 px-4 py-3 text-xs dark:border-slate-800 dark:bg-slate-950/40 sm:px-5">
+            <details className="shrink-0 border-t border-dashed border-slate-200 bg-slate-50/50 px-5 py-4 text-xs dark:border-slate-800 dark:bg-slate-950/40 sm:px-8">
               <summary className="cursor-pointer select-none font-semibold text-slate-600 dark:text-slate-400">
                 {MERIDIAN_SCRATCHPAD_SUMMARY}
               </summary>

@@ -16,9 +16,8 @@
   --meridian-800: #115e59;
   --meridian-900: #134e4a;
   --meridian-950: #042f2e;
-  --meridian-surface-from: #f8fafc;
-  --meridian-surface-via: rgb(240 253 250 / 0.55);
-  --meridian-surface-to: rgb(204 251 241 / 0.45);
+  /* Flat app canvas (no gradients) */
+  --meridian-page-bg: #f1f5f9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -34,9 +33,7 @@
     --meridian-800: #ccfbf1;
     --meridian-900: #ecfdf5;
     --meridian-950: #f0fdfa;
-    --meridian-surface-from: #020617;
-    --meridian-surface-via: rgb(2 44 34 / 0.35);
-    --meridian-surface-to: rgb(15 118 110 / 0.2);
+    --meridian-page-bg: #0f172a;
   }
 }
 
@@ -45,6 +42,10 @@ body {
 }
 
 @layer utilities {
+  .bg-meridian-page {
+    background-color: var(--meridian-page-bg);
+  }
+
   .chat-scroll {
     scrollbar-gutter: stable;
     scrollbar-width: thin;
