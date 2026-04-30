@@ -4,6 +4,40 @@
 
 :root {
   color-scheme: light dark;
+  /* Meridian brand (teal) — light surfaces */
+  --meridian-50: #f0fdfa;
+  --meridian-100: #ccfbf1;
+  --meridian-200: #99f6e4;
+  --meridian-300: #5eead4;
+  --meridian-400: #2dd4bf;
+  --meridian-500: #14b8a6;
+  --meridian-600: #0d9488;
+  --meridian-700: #0f766e;
+  --meridian-800: #115e59;
+  --meridian-900: #134e4a;
+  --meridian-950: #042f2e;
+  --meridian-surface-from: #f8fafc;
+  --meridian-surface-via: rgb(240 253 250 / 0.55);
+  --meridian-surface-to: rgb(204 251 241 / 0.45);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --meridian-50: #042f2e;
+    --meridian-100: #134e4a;
+    --meridian-200: #115e59;
+    --meridian-300: #0f766e;
+    --meridian-400: #14b8a6;
+    --meridian-500: #2dd4bf;
+    --meridian-600: #5eead4;
+    --meridian-700: #99f6e4;
+    --meridian-800: #ccfbf1;
+    --meridian-900: #ecfdf5;
+    --meridian-950: #f0fdfa;
+    --meridian-surface-from: #020617;
+    --meridian-surface-via: rgb(2 44 34 / 0.35);
+    --meridian-surface-to: rgb(15 118 110 / 0.2);
+  }
 }
 
 body {

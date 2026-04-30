@@ -5,8 +5,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 import LogoutButton from "@/components/auth/LogoutButton";
+import MeridianMark from "@/components/meridian/MeridianMark";
 import { apiUrl } from "@/lib/apiBase";
 import { useAuth } from "@/lib/hooks/useAuth";
+import {
+  MERIDIAN_ASSISTANT_LABEL,
+  MERIDIAN_CHAT_SUBTITLE,
+  MERIDIAN_COMPOSER_HELPER,
+  MERIDIAN_COMPOSER_PLACEHOLDER,
+  MERIDIAN_EMPTY_STATE_BODY,
+  MERIDIAN_EMPTY_STATE_HEADING,
+  MERIDIAN_SAMPLE_PROMPTS,
+  MERIDIAN_SCRATCHPAD_SUMMARY,
+  MERIDIAN_SUPPORT_TITLE,
+} from "@/lib/meridian";
 
 type ScratchEntry = { role?: string; content?: string };
 
@@ -212,10 +224,10 @@ export default function ChatPage() {
 
   if (isLoading || !user) {
     return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100/80 px-4 dark:from-slate-950 dark:to-slate-900/80">
+      <main className="flex min-h-[100dvh] items-center justify-center bg-meridian-page px-4">
         <div className="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-6 py-4 shadow-lg shadow-slate-200/40 dark:border-slate-800 dark:bg-slate-900/90 dark:shadow-black/30">
           <span
-            className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600 dark:border-indigo-900 dark:border-t-indigo-400"
+            className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-meridian-200 border-t-meridian-600 dark:border-meridian-900 dark:border-t-meridian-400"
             aria-hidden
           />
           <p className="text-sm font-medium text-slate-600 dark:text-slate-300">
@@ -227,25 +239,20 @@ export default function ChatPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] bg-gradient-to-br from-slate-50 via-indigo-50/40 to-violet-100/50 dark:from-slate-950 dark:via-slate-950 dark:to-indigo-950/30">
+    <main className="min-h-[100dvh] bg-meridian-page">
       <div className="mx-auto flex min-h-[100dvh] max-h-[100dvh] max-w-3xl flex-col px-3 py-4 sm:px-5 sm:py-6">
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200/90 bg-white/85 shadow-xl shadow-slate-300/25 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/80 dark:shadow-black/40 dark:ring-slate-800/60">
           <header className="shrink-0 border-b border-slate-200/80 bg-gradient-to-r from-white to-slate-50/90 px-4 py-4 dark:border-slate-800 dark:from-slate-900 dark:to-slate-900/95 sm:px-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
-                <div
-                  className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-lg shadow-md shadow-indigo-500/25"
-                  aria-hidden
-                >
-                  <span className="select-none">◆</span>
+                <div className="mt-0.5 shrink-0">
+                  <MeridianMark size="md" />
                 </div>
                 <div>
                   <h1 className="text-lg font-semibold tracking-tight text-slate-900 dark:text-white sm:text-xl">
-                    Chat
+                    {MERIDIAN_SUPPORT_TITLE}
                   </h1>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-                    ReAct agent · conversations saved on the server
-                  </p>
+                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{MERIDIAN_CHAT_SUBTITLE}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-2 sm:items-end">
@@ -253,7 +260,7 @@ export default function ChatPage() {
                   <label className="flex min-w-0 flex-1 flex-col gap-1 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400 sm:max-w-[280px] sm:flex-initial">
                     <span className="sr-only sm:not-sr-only sm:inline">Thread</span>
                     <select
-                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-normal normal-case text-slate-900 shadow-sm outline-none transition focus:border-indigo-300 focus:ring-2 focus:ring-indigo-500/20 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-indigo-600 dark:focus:ring-indigo-400/20"
+                      className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-normal normal-case text-slate-900 shadow-sm outline-none transition focus:border-meridian-300 focus:ring-2 focus:ring-meridian-500/20 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-meridian-600 dark:focus:ring-meridian-400/20"
                       value={conversationId ?? ""}
                       onChange={(e) => {
                         const v = e.target.value;
@@ -277,14 +284,14 @@ export default function ChatPage() {
                   <button
                     type="button"
                     onClick={() => void startNewChat()}
-                    className="shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-indigo-200 hover:bg-indigo-50/80 hover:text-indigo-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-indigo-500/40 dark:hover:bg-indigo-950/50 dark:hover:text-indigo-100"
+                    className="shrink-0 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-meridian-200 hover:bg-meridian-50/80 hover:text-meridian-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-meridian-500/40 dark:hover:bg-meridian-950/50 dark:hover:text-meridian-100"
                   >
                     New chat
                   </button>
                   <LogoutButton />
                   <Link
                     href="/"
-                    className="inline-flex shrink-0 items-center rounded-xl px-3 py-2 text-sm font-medium text-indigo-600 transition hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950/50"
+                    className="inline-flex shrink-0 items-center rounded-xl px-3 py-2 text-sm font-medium text-meridian-600 transition hover:bg-meridian-50 dark:text-meridian-400 dark:hover:bg-meridian-950/50"
                     prefetch={false}
                   >
                     Home
@@ -301,22 +308,42 @@ export default function ChatPage() {
             {loadingThread && (
               <div className="flex flex-col items-center justify-center gap-3 py-12">
                 <span
-                  className="h-8 w-8 shrink-0 animate-spin rounded-full border-2 border-slate-200 border-t-indigo-600 dark:border-slate-700 dark:border-t-indigo-400"
+                  className="h-8 w-8 shrink-0 animate-spin rounded-full border-2 border-slate-200 border-t-meridian-600 dark:border-slate-700 dark:border-t-meridian-400"
                   aria-hidden
                 />
                 <p className="text-sm font-medium text-slate-500 dark:text-slate-400">Loading messages…</p>
               </div>
             )}
             {!loadingThread && messages.length === 0 && !loading && (
-              <div className="mx-auto flex max-w-md flex-col items-center px-4 py-10 text-center">
-                <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-100 text-2xl dark:bg-indigo-950/80" aria-hidden>
-                  ✦
+              <div className="mx-auto flex max-w-lg flex-col items-center px-4 py-10 text-center">
+                <div
+                  className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-meridian-100 dark:bg-meridian-950/80"
+                  aria-hidden
+                >
+                  <MeridianMark size="md" className="shadow-lg shadow-meridian-600/20" />
                 </div>
-                <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Start a conversation</p>
-                <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
-                  Ask anything below. Use <span className="font-medium text-slate-700 dark:text-slate-300">New chat</span>{" "}
-                  or the thread picker for a separate saved thread.
+                <p className="text-base font-semibold text-slate-800 dark:text-slate-100">
+                  {MERIDIAN_EMPTY_STATE_HEADING}
                 </p>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500 dark:text-slate-400">
+                  {MERIDIAN_EMPTY_STATE_BODY}
+                </p>
+                <p className="mt-5 text-xs font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
+                  Try asking
+                </p>
+                <div className="mt-2 flex max-w-full flex-wrap justify-center gap-2">
+                  {MERIDIAN_SAMPLE_PROMPTS.map((p) => (
+                    <button
+                      key={p}
+                      type="button"
+                      disabled={loading || loadingThread}
+                      onClick={() => setMessage(p)}
+                      className="max-w-[min(100%,20rem)] rounded-full border border-meridian-200/90 bg-white px-3 py-1.5 text-left text-xs font-medium leading-snug text-meridian-900 shadow-sm transition hover:border-meridian-300 hover:bg-meridian-50 disabled:opacity-50 dark:border-meridian-800 dark:bg-slate-900 dark:text-meridian-100 dark:hover:bg-meridian-950/50"
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {messages.map((m) => (
@@ -325,26 +352,23 @@ export default function ChatPage() {
                 className={`flex gap-2 ${m.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 {m.role === "assistant" && (
-                  <span
-                    className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800 dark:text-indigo-400 dark:ring-slate-700 sm:flex"
-                    aria-hidden
-                  >
-                    AI
-                  </span>
+                  <div className="mt-1 hidden shrink-0 sm:block" aria-hidden>
+                    <MeridianMark size="sm" rounding="lg" />
+                  </div>
                 )}
                 <div
                   className={`max-w-[min(100%,36rem)] rounded-2xl px-4 py-3 text-[15px] leading-relaxed shadow-sm ${
                     m.role === "user"
-                      ? "rounded-br-md bg-gradient-to-br from-indigo-600 to-violet-700 text-white shadow-indigo-500/20 dark:from-indigo-500 dark:to-violet-600"
+                      ? "rounded-br-md bg-gradient-to-br from-meridian-600 to-meridian-700 text-white shadow-meridian-500/20 dark:from-meridian-500 dark:to-meridian-600"
                       : "rounded-bl-md border border-slate-200/90 bg-white text-slate-800 shadow-slate-200/40 dark:border-slate-700/90 dark:bg-slate-900 dark:text-slate-100 dark:shadow-black/20"
                   }`}
                 >
                   <span
                     className={`mb-1.5 block text-[10px] font-semibold uppercase tracking-wider ${
-                      m.role === "user" ? "text-indigo-100/90" : "text-slate-400 dark:text-slate-500"
+                      m.role === "user" ? "text-meridian-100/90" : "text-slate-400 dark:text-slate-500"
                     }`}
                   >
-                    {m.role === "user" ? "You" : "Assistant"}
+                    {m.role === "user" ? "You" : MERIDIAN_ASSISTANT_LABEL}
                   </span>
                   <p className="whitespace-pre-wrap">{m.content}</p>
                 </div>
@@ -360,18 +384,15 @@ export default function ChatPage() {
             ))}
             {loading && (
               <div className="flex justify-start gap-2">
-                <span
-                  className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-xs font-semibold text-indigo-600 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800 dark:text-indigo-400 dark:ring-slate-700"
-                  aria-hidden
-                >
-                  AI
-                </span>
+                <div className="mt-1 flex shrink-0" aria-hidden>
+                  <MeridianMark size="sm" rounding="lg" />
+                </div>
                 <div className="flex items-center gap-3 rounded-2xl rounded-bl-md border border-slate-200/90 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm dark:border-slate-700 dark:bg-slate-900 dark:text-slate-400">
-                  <span className="sr-only">Assistant is thinking</span>
+                  <span className="sr-only">{MERIDIAN_ASSISTANT_LABEL} is preparing a reply</span>
                   <span className="inline-flex items-center gap-1" aria-hidden>
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400/80 dark:bg-indigo-500/80" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400/80 [animation-delay:160ms] dark:bg-indigo-500/80" />
-                    <span className="h-2 w-2 animate-bounce rounded-full bg-indigo-400/80 [animation-delay:320ms] dark:bg-indigo-500/80" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-meridian-400/80 dark:bg-meridian-500/80" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-meridian-400/80 [animation-delay:160ms] dark:bg-meridian-500/80" />
+                    <span className="h-2 w-2 animate-bounce rounded-full bg-meridian-400/80 [animation-delay:320ms] dark:bg-meridian-500/80" />
                   </span>
                   <span className="text-xs font-medium text-slate-400 dark:text-slate-500">Thinking</span>
                 </div>
@@ -384,8 +405,8 @@ export default function ChatPage() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div className="min-w-0 flex-1">
                 <textarea
-                  className="min-h-[104px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-[15px] leading-relaxed text-slate-900 shadow-inner outline-none transition placeholder:text-slate-400 focus:border-indigo-300 focus:bg-white focus:ring-2 focus:ring-indigo-500/15 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-indigo-600 dark:focus:bg-slate-950 dark:focus:ring-indigo-400/15"
-                  placeholder="Write a message… (Enter to send, Shift+Enter for newline)"
+                  className="min-h-[104px] w-full resize-y rounded-xl border border-slate-200 bg-slate-50/80 p-3.5 text-[15px] leading-relaxed text-slate-900 shadow-inner outline-none transition placeholder:text-slate-400 focus:border-meridian-300 focus:bg-white focus:ring-2 focus:ring-meridian-500/15 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:focus:border-meridian-600 dark:focus:bg-slate-950 dark:focus:ring-meridian-400/15"
+                  placeholder={MERIDIAN_COMPOSER_PLACEHOLDER}
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   disabled={loading || loadingThread}
@@ -397,15 +418,13 @@ export default function ChatPage() {
                   }}
                   rows={3}
                 />
-                <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">
-                  Messages are sent to your configured agent backend.
-                </p>
+                <p className="mt-1.5 text-[11px] text-slate-400 dark:text-slate-500">{MERIDIAN_COMPOSER_HELPER}</p>
               </div>
               <button
                 type="button"
                 onClick={() => void send()}
                 disabled={loading || loadingThread || !message.trim()}
-                className="h-11 shrink-0 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-8 text-sm font-semibold text-white shadow-md shadow-indigo-500/25 transition hover:from-indigo-500 hover:to-violet-500 hover:shadow-lg hover:shadow-indigo-500/30 disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none sm:h-[104px] sm:self-stretch sm:px-6"
+                className="h-11 shrink-0 rounded-xl bg-gradient-to-r from-meridian-600 to-meridian-800 px-8 text-sm font-semibold text-white shadow-md shadow-meridian-500/25 transition hover:from-meridian-500 hover:to-meridian-700 hover:shadow-lg hover:shadow-meridian-500/30 disabled:pointer-events-none disabled:opacity-45 disabled:shadow-none sm:h-[104px] sm:self-stretch sm:px-6"
               >
                 {loading ? (
                   <span className="inline-flex items-center gap-2">
@@ -433,7 +452,7 @@ export default function ChatPage() {
           {scratchpad && scratchpad.length > 0 && (
             <details className="shrink-0 border-t border-dashed border-slate-200 bg-slate-50/50 px-4 py-3 text-xs dark:border-slate-800 dark:bg-slate-950/40 sm:px-5">
               <summary className="cursor-pointer select-none font-semibold text-slate-600 dark:text-slate-400">
-                Scratchpad (debug)
+                {MERIDIAN_SCRATCHPAD_SUMMARY}
               </summary>
               <pre className="mt-2 max-h-48 overflow-auto rounded-lg bg-slate-900/5 p-3 font-mono whitespace-pre-wrap text-slate-600 dark:bg-white/5 dark:text-slate-400">
                 {JSON.stringify(scratchpad, null, 2)}
