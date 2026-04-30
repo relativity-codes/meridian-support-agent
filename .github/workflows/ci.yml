@@ -1,6 +1,6 @@
-# Standalone repo: tests + frontend checks; Docker build only for Cloud Run image (PR + push); deploy when configured.
-# Configure GitHub Actions variables + secrets as in README (Cloud Run section).
-name: CI / Deploy to Cloud Run
+# Meridian Support: backend tests, frontend lint/export, Docker image for Cloud Run, deploy when GCP_PROJECT_ID is set.
+# Configure Actions variables + secrets per README (Cloud Run). Optional MCP_* variables pass through to Cloud Run for order/catalog tools.
+name: Meridian Support — CI / Deploy
 
 on:
   push:
@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: meridian-support-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -44,12 +44,10 @@ jobs:
       - name: Install backend dependencies
         run: |
           mkdir -p data
-          uv venv
-          uv pip install -e .
-          uv pip install pytest pytest-asyncio
+          uv sync --group dev
 
       - name: Run pytest
-        run: .venv/bin/python -m pytest -q
+        run: uv run pytest -q
 
   frontend-check:
     name: Frontend lint + static export
@@ -145,10 +143,14 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GOOGLE_CLIENT_ID: ${{ vars.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           OPENROUTER_BASE_URL: ${{ vars.OPENROUTER_BASE_URL }}
           OPENROUTER_DEFAULT_MODEL: ${{ vars.OPENROUTER_DEFAULT_MODEL }}
           MAX_REACT_ITERATIONS: ${{ vars.MAX_REACT_ITERATIONS }}
+          MCP_SERVER_URL: ${{ vars.MCP_SERVER_URL }}
+          MCP_SERVER_ID: ${{ vars.MCP_SERVER_ID }}
+          MCP_HTTP_TIMEOUT_SECONDS: ${{ vars.MCP_HTTP_TIMEOUT_SECONDS }}
         run: |
           python - <<'PY'
           import json
@@ -167,10 +169,14 @@ jobs:
               "DATABASE_URL",
               "SECRET_KEY",
               "GOOGLE_CLIENT_ID",
+              "GOOGLE_CLIENT_SECRET",
               "OPENROUTER_API_KEY",
               "OPENROUTER_BASE_URL",
               "OPENROUTER_DEFAULT_MODEL",
               "MAX_REACT_ITERATIONS",
+              "MCP_SERVER_URL",
+              "MCP_SERVER_ID",
+              "MCP_HTTP_TIMEOUT_SECONDS",
           ]
 
           values = dict(defaults)
