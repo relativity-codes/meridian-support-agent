@@ -9,11 +9,12 @@ ARG NEXT_PUBLIC_GOOGLE_CLIENT_ID=
 ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=${NEXT_PUBLIC_GOOGLE_CLIENT_ID}
 
-COPY frontend/package.json frontend/yarn.lock frontend/.yarnrc.yml ./
-RUN corepack enable && yarn install --immutable
+# Use npm + package-lock.json (same as GitHub Actions) so the image matches CI and avoids stale yarn.lock.
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci
 
 COPY frontend/ ./
-RUN yarn run build
+RUN npm run build
 
 
 FROM python:3.11-slim AS backend
