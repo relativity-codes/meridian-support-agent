@@ -28,7 +28,7 @@ def call_tool_result_to_jsonable(result: CallToolResult) -> dict[str, Any]:
 
 
 class McpStreamableHttpToolRegistry:
-    """Streamable HTTP MCP client registered as ``ToolRegistry``."""
+    """Meridian order/catalog MCP over Streamable HTTP, wired as ``ToolRegistry`` for the ReAct agent."""
 
     def __init__(self, *, url: str, server_id: str, timeout_seconds: float = 120.0) -> None:
         self._url = url.strip()

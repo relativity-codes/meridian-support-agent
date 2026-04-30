@@ -42,7 +42,8 @@ def _merge_host_cors(origins: list[str], host_url: str) -> list[str]:
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
-    APP_NAME: str = "meridian-support-agent"
+    #: Display name for health checks, OpenRouter ``X-Title``, and logs.
+    APP_NAME: str = "Meridian Support"
     APP_ENV: str = "development"
     DEBUG: bool = True
 

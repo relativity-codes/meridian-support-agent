@@ -1,7 +1,7 @@
 [project]
 name = "meridian-support-agent-backend"
 version = "0.1.0"
-description = "Meridian support agent API (LangGraph + OpenRouter + pluggable tools)"
+description = "Meridian Electronics customer-support API: FastAPI, ReAct + OpenRouter, optional MCP order/catalog tools."
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [

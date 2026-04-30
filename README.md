@@ -87,7 +87,7 @@ The [Dockerfile](Dockerfile) exists **solely** to produce the **Cloud Run** imag
 | `HOST`                           | Public URL, e.g. `https://your-service.run.app`                   |
 | `CORS_ORIGINS`                   | Comma list; include your Cloud Run URL                            |
 | `ALLOWED_HOSTS`                  | Include `*` or your Run hostname                                  |
-| `APP_NAME`                       | Optional display                                                  |
+| `APP_NAME`                       | Display name (default **Meridian Support**); `/health`, OpenRouter `X-Title` |
 | `OPENROUTER_BASE_URL`            | Default `https://openrouter.ai/api/v1`                            |
 | `OPENROUTER_DEFAULT_MODEL`       | e.g. `openai/gpt-4o-mini`                                         |
 | `MAX_REACT_ITERATIONS`           | Optional cap                                                      |

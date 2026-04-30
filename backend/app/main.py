@@ -15,6 +15,7 @@ from app.api.routers.v1 import auth, chat, users
 from app.config import settings
 from app.core.openrouter import OpenRouterClient
 from app.db.session import close_db, init_db
+from app.meridian_branding import API_DESCRIPTION, API_TITLE
 from app.tools.mcp_registry import McpStreamableHttpToolRegistry
 from app.tools.registry import NullToolRegistry
 from app.utils.logger import log_exception
@@ -45,17 +46,35 @@ async def lifespan(app: FastAPI):
         reg = NullToolRegistry()
     await reg.initialize()
     app.state.tool_registry = reg
-    logger.info("startup complete (ReAct kit)")
+    logger.info("startup complete (%s)", settings.APP_NAME)
     yield
     await close_db()
     logger.info("shutdown complete")
 
 
 app = FastAPI(
-    title="meridian-support-agent API",
+    title=API_TITLE,
     version="0.1.0",
-    description="ReAct loop (Think–Act–Observe) with pluggable tools",
+    description=API_DESCRIPTION,
     lifespan=lifespan,
+    openapi_tags=[
+        {
+            "name": "auth",
+            "description": "Google Sign-In for authorized Meridian Electronics preview users.",
+        },
+        {
+            "name": "users",
+            "description": "Signed-in user profile.",
+        },
+        {
+            "name": "chat",
+            "description": (
+                "Customer support threads and assistant replies. "
+                "The model uses a ReAct loop; optional MCP tools supply live catalog/order data."
+            ),
+        },
+        {"name": "Frontend", "description": "Serves the exported Next.js UI from ./static when present."},
+    ],
 )
 
 
@@ -143,6 +162,9 @@ async def serve_frontend(full_path: str):
         return FileResponse(index_path)
 
     return {
-        "message": "meridian-support-agent API is running. Static UI not found — run ./build_and_serve.sh or ./scripts/export-static.sh and serve from backend/.",
+        "message": (
+            "Meridian Support API is running. Static UI not found — run ./build_and_serve.sh "
+            "or ./scripts/export-static.sh and serve from backend/."
+        ),
         "hint": "next build (export) then copy frontend/out/* to backend/static/",
     }

@@ -1,11 +1,17 @@
-# meridian-support-agent backend
+# Meridian Support — backend
 
-FastAPI service: Google Sign-In, LangGraph ReAct loop, OpenRouter, pluggable `ToolRegistry` (default: `NullToolRegistry`).
+FastAPI service for the **Meridian Electronics** internal customer-support prototype: **Google Sign-In** (authorized preview users), **LangGraph** ReAct loop (think → act → observe) with **OpenRouter**, persisted chat, and a pluggable **`ToolRegistry`**.
 
-Run:
+- **Default tools:** empty (`NullToolRegistry`) until you set environment variables.
+- **Meridian order / catalog MCP:** set `MCP_SERVER_URL` to your Streamable HTTP endpoint (see `.env.example`). The assistant then receives live tool definitions from that server.
+
+## Quick run
 
 ```bash
 cp .env.example .env
-uv sync  # or: pip install -e .
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Set GOOGLE_CLIENT_ID, OPENROUTER_API_KEY, SECRET_KEY, DATABASE_URL (or SQLite for local tests)
+uv sync
+uv run uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
+
+OpenAPI docs: `/docs` (title **Meridian Support API**).

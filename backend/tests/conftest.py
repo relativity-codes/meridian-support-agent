@@ -1,5 +1,5 @@
 """
-Ensure test env is set before any `app` import (engine binds at first import).
+Meridian Support backend tests: env defaults before ``app`` import (engine binds at first import).
 Pytest uses a file SQLite DB by default so CI and ./scripts/ci-local.sh need no Docker DB.
 Run pytest with cwd = backend/ (see CI and scripts/ci-local.sh).
 """

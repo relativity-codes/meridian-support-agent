@@ -1,3 +1,5 @@
+"""Meridian Support chat: threads, messages, and assistant replies (ReAct + optional MCP)."""
+
 import logging
 from datetime import datetime
 from typing import Any, Literal
