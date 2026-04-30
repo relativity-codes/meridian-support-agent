@@ -1,4 +1,4 @@
-# agentic-reAct-kit backend
+# meridian-support-agent backend
 
 FastAPI service: Google Sign-In, LangGraph ReAct loop, OpenRouter, pluggable `ToolRegistry` (default: `NullToolRegistry`).
 

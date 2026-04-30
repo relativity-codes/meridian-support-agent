@@ -37,7 +37,7 @@ export default function HomePage() {
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
         <p className="mt-2 text-slate-600 dark:text-slate-400">
-          agentic-reAct-kit — Google sign-in to open the chat.
+          meridian-support-agent — Google sign-in to open the chat.
         </p>
       </div>
       <SignIn />

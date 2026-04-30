@@ -15,7 +15,7 @@ type ChatTurn = { id: string; role: "user" | "assistant"; content: string };
 type ConversationSummary = { id: string; title: string | null; updated_at: string | null };
 
 function convStorageKey(userId: string): string {
-  return `agentic-react-kit:active-conversation:${userId}`;
+  return `meridian-support-agent:active-conversation:${userId}`;
 }
 
 export default function ChatPage() {

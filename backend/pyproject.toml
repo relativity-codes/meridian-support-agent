@@ -1,7 +1,7 @@
 [project]
-name = "agentic-react-kit-backend"
+name = "meridian-support-agent-backend"
 version = "0.1.0"
-description = "ReAct agent kit API (LangGraph + OpenRouter + pluggable tools)"
+description = "Meridian support agent API (LangGraph + OpenRouter + pluggable tools)"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -37,3 +37,6 @@ packages = ["app"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
+markers = [
+    "integration: calls external services (enable with RUN_MCP_INTEGRATION=1)",
+]

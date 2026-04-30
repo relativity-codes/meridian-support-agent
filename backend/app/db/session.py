@@ -23,7 +23,7 @@ def _install_cockroach_version_parser() -> None:
     Cockroach responds to ``select pg_catalog.version()`` with strings like
     ``CockroachDB CCL v25.4.8 (...)``, which SQLAlchemy's default parser rejects.
     """
-    if getattr(PGDialect, "_react_kit_cockroach_patch", False):
+    if getattr(PGDialect, "_meridian_support_cockroach_patch", False):
         return
 
     original_get_server_version_info = PGDialect._get_server_version_info
@@ -47,7 +47,7 @@ def _install_cockroach_version_parser() -> None:
         raise AssertionError(f"Could not determine version from string '{version_text}'")
 
     PGDialect._get_server_version_info = _patched_get_server_version_info
-    PGDialect._react_kit_cockroach_patch = True
+    PGDialect._meridian_support_cockroach_patch = True
 
 
 _install_cockroach_version_parser()

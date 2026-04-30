@@ -5,7 +5,7 @@ import { AppProviders } from "@/components/providers/AppProviders";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "agentic-reAct-kit",
+  title: "meridian-support-agent",
   description: "ReAct agent playground",
 };
 

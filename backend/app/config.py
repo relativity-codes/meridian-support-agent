@@ -42,7 +42,7 @@ def _merge_host_cors(origins: list[str], host_url: str) -> list[str]:
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True, extra="ignore")
 
-    APP_NAME: str = "agentic-reAct-kit"
+    APP_NAME: str = "meridian-support-agent"
     APP_ENV: str = "development"
     DEBUG: bool = True
 
@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     ALLOWED_HOSTS: str = "localhost,127.0.0.1,test,*"
 
     DATABASE_URL: str = Field(
-        default="postgresql+asyncpg://user:password@localhost:5432/react_kit",
+        default="postgresql+asyncpg://user:password@localhost:5432/meridian_support",
         description=(
             "Async SQLAlchemy URL. Use postgresql+asyncpg:// for PostgreSQL or CockroachDB "
             "(Cockroach Cloud: port 26257, database defaultdb). "
@@ -80,6 +80,13 @@ class Settings(BaseSettings):
     OPENROUTER_DEFAULT_MODEL: str = "openai/gpt-4o-mini"
 
     MAX_REACT_ITERATIONS: int = 8
+
+    #: Streamable HTTP MCP server (e.g. Meridian order service). Empty disables MCP tools.
+    MCP_SERVER_URL: str = ""
+    #: Value the model must use as ``action.server_id`` for tools from ``MCP_SERVER_URL``.
+    MCP_SERVER_ID: str = "meridian_orders"
+    #: httpx read/connect budget for MCP Streamable HTTP (Cloud Run cold starts).
+    MCP_HTTP_TIMEOUT_SECONDS: float = 120.0
 
     @field_validator("DATABASE_URL", mode="before")
     @classmethod

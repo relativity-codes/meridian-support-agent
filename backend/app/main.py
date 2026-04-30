@@ -15,6 +15,7 @@ from app.api.routers.v1 import auth, chat, users
 from app.config import settings
 from app.core.openrouter import OpenRouterClient
 from app.db.session import close_db, init_db
+from app.tools.mcp_registry import McpStreamableHttpToolRegistry
 from app.tools.registry import NullToolRegistry
 from app.utils.logger import log_exception
 
@@ -33,7 +34,15 @@ async def lifespan(app: FastAPI):
         api_key=settings.OPENROUTER_API_KEY or None,
         base_url=settings.OPENROUTER_BASE_URL,
     )
-    reg = NullToolRegistry()
+    mcp_url = (settings.MCP_SERVER_URL or "").strip()
+    if mcp_url:
+        reg = McpStreamableHttpToolRegistry(
+            url=mcp_url,
+            server_id=(settings.MCP_SERVER_ID or "meridian_orders").strip(),
+            timeout_seconds=settings.MCP_HTTP_TIMEOUT_SECONDS,
+        )
+    else:
+        reg = NullToolRegistry()
     await reg.initialize()
     app.state.tool_registry = reg
     logger.info("startup complete (ReAct kit)")
@@ -43,7 +52,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="agentic-reAct-kit API",
+    title="meridian-support-agent API",
     version="0.1.0",
     description="ReAct loop (Think–Act–Observe) with pluggable tools",
     lifespan=lifespan,
@@ -134,6 +143,6 @@ async def serve_frontend(full_path: str):
         return FileResponse(index_path)
 
     return {
-        "message": "agentic-reAct-kit API is running. Static UI not found — run ./build_and_serve.sh or ./scripts/export-static.sh and serve from backend/.",
+        "message": "meridian-support-agent API is running. Static UI not found — run ./build_and_serve.sh or ./scripts/export-static.sh and serve from backend/.",
         "hint": "next build (export) then copy frontend/out/* to backend/static/",
     }

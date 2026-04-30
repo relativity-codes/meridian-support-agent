@@ -87,7 +87,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: false
-          tags: agentic-react-kit:test
+          tags: meridian-support-agent:test
           build-args: |
             NEXT_PUBLIC_API_URL=
             NEXT_PUBLIC_GOOGLE_CLIENT_ID=${{ vars.NEXT_PUBLIC_GOOGLE_CLIENT_ID }}
