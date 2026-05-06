@@ -16,6 +16,7 @@ from app.db.repositories.chat_repository import ChatRepository
 from app.tools.registry import ToolRegistry
 from app.utils.logger import log_exception
 from app.utils.validators import parse_uuid
+from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 
 logger = logging.getLogger(__name__)
 
@@ -189,8 +190,25 @@ async def chat(
         await db.rollback()
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    text = final.get("final_answer") or "No response generated."
-    scratch = final.get("scratchpad")
+    messages = final.get("messages", [])
+    if messages:
+        last_msg = messages[-1]
+        text = getattr(last_msg, "content", str(last_msg))
+    else:
+        text = "No response generated."
+
+    # Map LangChain messages back to a "scratchpad" for the UI
+    scratch = []
+
+    # Skip the very first human message and the very last assistant message
+    for m in messages[1:-1]:
+        role = "note"
+        if isinstance(m, AIMessage):
+            role = "thought"
+        elif isinstance(m, ToolMessage):
+            role = "observation"
+
+        scratch.append({"role": role, "content": getattr(m, "content", str(m))})
 
     try:
         start_seq = await ChatRepository.max_sequence(db, conv.id) + 1
@@ -206,5 +224,5 @@ async def chat(
     return ChatResponse(
         conversation_id=conv.id,
         response=text,
-        scratchpad=scratch if isinstance(scratch, list) else None,
+        scratchpad=scratch,
     )

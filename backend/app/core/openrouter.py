@@ -30,3 +30,22 @@ class OpenRouterClient:
             **{k: v for k, v in kwargs.items() if k != "model"},
         )
         return response.model_dump()
+
+    def get_chat_model(self, **kwargs: Any):
+        """Returns a LangChain-compatible ChatOpenAI instance configured for OpenRouter."""
+        from langchain_openai import ChatOpenAI
+
+        api_key = settings.OPENROUTER_API_KEY
+        base_url = settings.OPENROUTER_BASE_URL
+        model = kwargs.get("model", settings.OPENROUTER_DEFAULT_MODEL)
+
+        return ChatOpenAI(
+            api_key=api_key,
+            base_url=base_url,
+            model=model,
+            default_headers={
+                "HTTP-Referer": settings.HOST,
+                "X-Title": settings.APP_NAME,
+            },
+            **{k: v for k, v in kwargs.items() if k != "model"},
+        )

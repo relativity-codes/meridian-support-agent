@@ -23,6 +23,8 @@ class ToolRegistry(Protocol):
     ) -> Any:
         ...
 
+    def get_langchain_tools(self) -> list: ...
+
 
 class NullToolRegistry:
     """No MCP servers; ReAct loop can still reason and answer without tools."""
@@ -42,3 +44,6 @@ class NullToolRegistry:
     ) -> Any:
         logger.info("NullToolRegistry.invoke_tool called server=%s tool=%s", server_id, tool_name)
         return {"error": "no_tools_configured", "message": "No MCP tools are registered in this kit yet."}
+
+    def get_langchain_tools(self) -> list:
+        return []

@@ -99,3 +99,27 @@ class McpStreamableHttpToolRegistry:
                     result = await session.call_tool(tool_name, args)
 
         return call_tool_result_to_jsonable(result)
+
+    def get_langchain_tools(self) -> list:
+        """Returns the cached tools as a list of LangChain-compatible tool objects."""
+        from langchain.tools import Tool as LCTool
+
+        tools = []
+        for t in self._tools_cache:
+
+            async def _invoke(tool_name=t["name"], **kwargs):
+                return await self.invoke_tool(
+                    server_id=self._server_id,
+                    tool_name=tool_name,
+                    arguments=kwargs,
+                )
+
+            tools.append(
+                LCTool(
+                    name=t["name"],
+                    description=t["description"],
+                    func=None,  # Not used for async
+                    coroutine=_invoke,
+                )
+            )
+        return tools

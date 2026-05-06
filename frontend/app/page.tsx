@@ -26,57 +26,79 @@ export default function HomePage() {
 
   if (isLoading) {
     return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-meridian-page px-4">
-        <p className="text-sm text-slate-500 dark:text-slate-400">Checking session…</p>
-      </main>
-    );
-  }
-
-  if (user) {
-    return (
-      <main className="flex min-h-[100dvh] items-center justify-center bg-meridian-page px-4">
-        <p className="text-sm text-slate-500 dark:text-slate-400">Opening support workspace…</p>
+      <main className="flex min-h-[100dvh] items-center justify-center bg-background px-4">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
+          <p className="text-sm text-muted-foreground animate-pulse">Initializing Meridian Support...</p>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-[100dvh] bg-meridian-page">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-12 px-6 py-16 sm:max-w-4xl sm:px-10 sm:py-24 lg:max-w-5xl">
-        <div className="flex flex-col gap-8 rounded-3xl border border-slate-200/90 bg-white/90 p-8 shadow-xl shadow-slate-300/20 ring-1 ring-slate-200/50 backdrop-blur-md dark:border-slate-800/90 dark:bg-slate-900/85 dark:shadow-black/40 dark:ring-slate-800/60 sm:p-12">
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8 lg:gap-10">
-            <MeridianMark size="md" className="shadow-lg shadow-meridian-600/25" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-wider text-meridian-700 dark:text-meridian-400">
-                Customer support preview
-              </p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-                {MERIDIAN_COMPANY_NAME}
-              </h1>
-              <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{MERIDIAN_TAGLINE}</p>
-              <ul className="mt-6 list-inside list-disc space-y-2.5 text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-[15px]">
-                {MERIDIAN_CAPABILITIES.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
-              </ul>
-            </div>
+    <main className="relative min-h-[100dvh] overflow-hidden bg-background">
+      {/* Background Blobs */}
+      <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-primary/10 blur-[100px]" />
+      <div className="absolute -right-20 bottom-0 h-96 w-96 rounded-full bg-blue-500/10 blur-[100px]" />
+      
+      <div className="relative z-10 mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col items-center justify-center px-6 py-12 lg:px-8">
+        <div className="animate-in flex w-full flex-col items-center text-center">
+          <div className="mb-8 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-2xl shadow-primary/20 ring-1 ring-border dark:bg-slate-900">
+            <MeridianMark size="md" />
           </div>
-
-          <div className="rounded-xl border border-amber-200/90 bg-amber-50/90 px-5 py-4 text-sm leading-relaxed text-amber-950 dark:border-amber-900/50 dark:bg-amber-950/40 dark:text-amber-100 sm:px-6 sm:py-5">
-            <strong className="font-semibold">Prototype.</strong> {MERIDIAN_PROTOTYPE_DISCLAIMER}
+          
+          <div className="mb-4 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold tracking-wide text-primary ring-1 ring-inset ring-primary/20">
+            Experimental Support Agent
           </div>
+          
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            {MERIDIAN_COMPANY_NAME}
+          </h1>
+          
+          <p className="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground sm:text-xl">
+            {MERIDIAN_TAGLINE}
+          </p>
 
-          <div className="border-t border-slate-200/80 pt-10 dark:border-slate-700/80">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white sm:text-xl">Authorized access</h2>
-            <p className="mt-3 max-w-prose text-sm leading-relaxed text-slate-600 dark:text-slate-400 sm:text-[15px]">
-              {MERIDIAN_AUTH_HINT}
-            </p>
-            <div className="mt-8 flex justify-center sm:justify-start">
-              <SignIn />
+          <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="glass-card flex w-full max-w-lg flex-col gap-8 rounded-[2rem] p-8 sm:p-10">
+              <div className="flex flex-col gap-6">
+                <div className="text-left">
+                  <h2 className="text-xl font-semibold text-foreground">Get Started</h2>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {MERIDIAN_AUTH_HINT}
+                  </p>
+                </div>
+                
+                <div className="flex flex-col gap-3">
+                  <SignIn />
+                </div>
+              </div>
+
+              <div className="border-t border-border pt-6 text-left">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-primary">Key Capabilities</h3>
+                <ul className="mt-4 grid grid-cols-1 gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+                  {MERIDIAN_CAPABILITIES.map((c) => (
+                    <li key={c} className="flex items-center gap-2">
+                      <span className="h-1.5 w-1.5 rounded-full bg-primary/60" />
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="rounded-2xl bg-amber-500/10 px-4 py-3 text-xs leading-relaxed text-amber-600 ring-1 ring-inset ring-amber-500/20 dark:text-amber-400">
+                <span className="font-bold">Prototype Warning:</span> {MERIDIAN_PROTOTYPE_DISCLAIMER}
+              </div>
             </div>
           </div>
         </div>
       </div>
+      
+      <footer className="absolute bottom-8 left-0 right-0 text-center">
+        <p className="text-xs text-muted-foreground">
+          &copy; {new Date().getFullYear()} Meridian Electronics. Internal Use Only.
+        </p>
+      </footer>
     </main>
   );
 }

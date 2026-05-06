@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 import { apiFetch } from "@/lib/api/client";
 import { useUserStore } from "@/lib/store/userStore";
@@ -20,8 +21,9 @@ export default function LogoutButton() {
     <button
       type="button"
       onClick={() => void onLogout()}
-      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition hover:border-slate-300 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700"
+      className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-card px-3 py-2.5 text-sm font-medium transition hover:bg-muted"
     >
+      <LogOut size={16} />
       Sign out
     </button>
   );
